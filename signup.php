@@ -81,29 +81,29 @@
                  </h2><br><br>
 
             <div class="form-group">
-                <form action="">
+                <form action="controller/register.php" method="POST">
                     <div class="row mb-3">
                         <label for="inputName" class="col-sm-2 col-form-label">Name</label>
                         <div class="col-sm-10">
-                          <input type="text" class="form-control" id="inputName" required>
+                          <input type="text" class="form-control" id="inputName" name="name" required>
                         </div>
                       </div>
                       <div class="row mb-3">
                         <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
                         <div class="col-sm-10">
-                          <input type="email" class="form-control" id="inputEmail" required>
+                          <input type="email" class="form-control" id="inputEmail" name="email" required>
                         </div>
                       </div>
                       <div class="row mb-3">
                         <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
                         <div class="col-sm-10">
-                          <input type="password" class="form-control" id="inputPassword" required>
+                          <input type="password" class="form-control" id="inputPassword" name="password" required>
                         </div>
                       </div>
                         
-                      <a href="login.html"><button type="button" id="signup-btn">SIGN UP</button></a>
+                      <button type="submit" id="signup-btn">SIGN UP</button>
                       <a href="index.html"><button type="button" id="back-btn-main">BACK</button></a><br>
-                      <b>Already have an account?</b> <a href="login.html">login here</a> 
+                      <b>Already have an account?</b> <a href="login.php">login here</a> 
 
                 </form>
             </div>
