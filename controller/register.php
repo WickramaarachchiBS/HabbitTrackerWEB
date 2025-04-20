@@ -3,7 +3,7 @@ require_once 'db_connect.php';
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = trim($_POST['username']);
+    $username = trim($_POST['name']);
     $email = trim($_POST['email']);
     $password = password_hash(trim($_POST['password']), PASSWORD_DEFAULT);
     
@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         
         // Insert new user
-        $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (?, ?, ?)");
         $stmt->execute([$username, $email, $password]);
         
         $_SESSION['success'] = "Registration successful! Please login.";

@@ -10,7 +10,8 @@
       margin: 0;
       padding: 0;
       background-color: #979797;
-      background-image: url('4.jpg');
+      background-image: url('images/background.png');
+      background-repeat: no-repeat;
       background-size: cover;
       display: flex;
       justify-content: center;
@@ -21,9 +22,10 @@
       background: rgba(216, 216, 216, 0.829);
       padding: 20px;
       border-radius: 10px;
-      /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */
       text-align: center;
       width: 70vh;
+      border: 1px solid #333;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
     h1 {
       font-size: 1.5em;
@@ -63,71 +65,100 @@
       justify-content: space-between;
       margin-bottom: 10px;
     }
-    .progress-group {
-      margin: 20px 0;
-    }
-    input[type="range"] {
-      width: 100%;
-    }
     .footer-buttons {
       display: flex;
       justify-content: space-between;
     }
+    .error { color: red; margin-bottom: 15px; }
   </style>
 </head>
 <body>
+  <?php
+  session_start();
+  if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+      header("Location: login.php");
+      exit();
+  }
+  require_once 'controller/db_connect.php';
+  // Fetch habits for the logged-in user
+  $user_id = $_SESSION['user_id'];
+  try {
+      $stmt = $pdo->prepare("SELECT id, habit_text FROM habits WHERE user_id = ? ORDER BY created_at DESC");
+      $stmt->execute([$user_id]);
+      $habits = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  } catch(PDOException $e) {
+      echo '<p class="error">Error loading habits: ' . $e->getMessage() . '</p>';
+      $habits = [];
+  }
+  ?>
   <div class="container">
     <h1>TRACK YOUR DAILY HABITS</h1>
+    <p>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</p>
     <div class="form-group">
       <input type="text" placeholder="Enter a habit" id="habit-input">
       <button onclick="addHabit()">ADD</button>
     </div>
-    <br>
-    <br>
+    <br><br>
     <h2>HABIT LIST</h2>
     <div class="habit-list" id="habit-list">
-      <div class="habit-item">
-        <span>HABIT 1</span>
-        <button onclick="deleteHabit(this)">DELETE</button>
-      </div>
-      <div class="habit-item">
-        <span>HABIT 2</span>
-        <button onclick="deleteHabit(this)">DELETE</button>
-      </div>
-      <div class="habit-item">
-        <span>HABIT 3</span>
-        <button onclick="deleteHabit(this)">DELETE</button>
-      </div>
+      <?php foreach ($habits as $habit): ?>
+        <div class="habit-item" data-id="<?php echo $habit['id']; ?>">
+          <span><?php echo htmlspecialchars($habit['habit_text']); ?></span>
+          <button onclick="deleteHabit(<?php echo $habit['id']; ?>)">DELETE</button>
+        </div>
+      <?php endforeach; ?>
     </div>
     <br>
-    
     <div class="footer-buttons">
-      <button onclick="goBack()">BACK</button>
       <button onclick="goNext()">HOME</button>
       <button onclick="goConUs()">CONTACTUS</button>
+      <button onclick="window.location.href='controller/logout.php'">LOGOUT</button>
     </div>
   </div>
 
   <script>
     function addHabit() {
       const habitInput = document.getElementById('habit-input');
-      const habitList = document.getElementById('habit-list');
       const habitText = habitInput.value.trim();
-      if (habitText !== "") {
-        const habitItem = document.createElement('div');
-        habitItem.classList.add('habit-item');
-        habitItem.innerHTML = `<span>${habitText}</span><button onclick="deleteHabit(this)">DELETE</button>`;
-        habitList.appendChild(habitItem);
-        habitInput.value = "";
-      }
+      if (habitText === "") return;
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', 'controller/add_habit.php', true);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText);
+          if (response.success) {
+            const habitList = document.getElementById('habit-list');
+            const habitItem = document.createElement('div');
+            habitItem.classList.add('habit-item');
+            habitItem.setAttribute('data-id', response.habit_id);
+            habitItem.innerHTML = `<span>${habitText}</span><button onclick="deleteHabit(${response.habit_id})">DELETE</button>`;
+            habitList.prepend(habitItem);
+            habitInput.value = "";
+          } else {
+            alert('Error adding habit: ' + response.error);
+          }
+        }
+      };
+      xhr.send(`habit_text=${encodeURIComponent(habitText)}`);
     }
 
-    function deleteHabit(button) {
-      button.parentElement.remove();
-    }
-
-    function goBack() {
-      window.history.back();
+    function deleteHabit(habitId) {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', 'controller/delete_habit.php', true);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText);
+          if (response.success) {
+            document.querySelector(`.habit-item[data-id="${habitId}"]`).remove();
+          } else {
+            alert('Error deleting habit: ' + response.error);
+          }
+        }
+      };
+      xhr.send(`habit_id=${habitId}`);
     }
 
     function goNext() {
