@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Previous head and style sections remain the same -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker</title>
+    <style>
+        /* Previous styles remain the same */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .page {
+            display: none;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        form {
+            width: 100%;
+        }
+
+        form input, form textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        form label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        #habit-list {
+            list-style: none;
+            padding: 0;
+            width: 100%;
+        }
+
+        #habit-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background-color: #f9f9f9;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .delete-btn {
+            background-color: #ff4444;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .delete-btn:hover {
+            background-color: #cc0000;
+        }
+
+        #progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        #progress-bar::after {
+            content: '';
+            display: block;
+            width: 50%;
+            height: 100%;
+            background-color: #4CAF50;
+            transition: width 0.3s ease;
+        }
+
+        .error-message {
+            color: #ff4444;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #ffe6e6;
+            display: none;
+            text-align: center;
+        }
+
+        .success-message {
+            color: #4CAF50;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #e6ffe6;
+            display: none;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #444;
+            margin: 20px 0;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Page -->
+    <div id="landing-page" class="page" style="display: block;">
+        <h1>HABIT TRACKER</h1>
+        <p style="text-align: center;">Welcome to Habit Tracker!</p>
+        <p style="text-align: center;">A tool to track your daily habits</p>
+        <div class="button-group">
+            <button id="signup-btn">SIGN UP</button>
+            <button id="login-btn-main">LOGIN</button>
+        </div>
+    </div>
+
+    <!-- Sign Up Page -->
+    <div id="signup-page" class="page">
+        <h1>CREATE YOUR ACCOUNT</h1>
+        <form id="signup-form" onsubmit="return false;">
+            <label for="signup-name">NAME:</label>
+            <input type="text" id="signup-name" name="name" required>
+            
+            <label for="signup-email">EMAIL:</label>
+            <input type="email" id="signup-email" name="email" required>
+            
+            <label for="signup-password">PASSWORD:</label>
+            <input type="password" id="signup-password" name="password" required>
+            
+            <div id="signup-error" class="error-message">Error creating account. Please try again.</div>
+            <div id="signup-success" class="success-message">Account created successfully!</div>
+            
+            <div class="button-group">
+                <button id="signup-submit-btn">SIGN UP</button>
+                <button id="signup-back-btn" type="button">BACK</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login-page" class="page">
+        <h1>LOGIN TO YOUR ACCOUNT</h1>
+        <form id="login-form" onsubmit="return false;">
+            <label for="login-email">EMAIL:</label>
+            <input type="email" id="login-email" name="email" required>
+            <label for="login-password">PASSWORD:</label>
+            <input type="password" id="login-password" name="password" required>
+            <div id="login-error" class="error-message">Invalid email or password. Please try again.</div>
+            <div class="button-group">
+                <button id="login-attempt-btn">LOGIN</button>
+                <button id="login-back-btn" type="button">BACK</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Habit Tracker Page -->
+    <div id="habit-tracker-page" class="page">
+        <h1>TRACK YOUR HABITS</h1>
+        <div style="width: 100%;">
+            <input type="text" id="new-habit" placeholder="Enter a new habit">
+            <button id="add-habit-btn">ADD HABIT</button>
+        </div>
+        <h2>YOUR HABITS</h2>
+        <ul id="habit-list"></ul>
+        <p>PROGRESS:</p>
+        <div id="progress-bar"></div>
+        <!-- Added navigation buttons -->
+        <div class="nav-buttons">
+            <button id="tracker-back-btn">BACK</button>
+            <button id="tracker-next-btn">NEXT</button>
+        </div>
+    </div>
+
+    <!-- Contact Page -->
+    <div id="contact-page" class="page">
+        <h1>CONTACT US</h1>
+        <form id="contact-form" onsubmit="return false;">
+            <label for="contact-name">NAME:</label>
+            <input type="text" id="contact-name" name="name" required>
+            
+            <label for="contact-email">EMAIL:</label>
+            <input type="email" id="contact-email" name="email" required>
+            
+            <label for="contact-message">MESSAGE:</label>
+            <textarea id="contact-message" name="message" rows="4" required></textarea>
+            
+            <div id="contact-success" class="success-message">Message sent successfully!</div>
+            
+            <div class="button-group">
+                <button id="contact-submit-btn">SUBMIT</button>
+                <button id="contact-back-btn" type="button">BACK</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Initialize variables
+        const users = {
+            'rashinikarunarathne262@gmail.com': {
+                name: 'Rashini',
+                password: 'rash123'
+            }
+        };
+
+        // Get DOM elements
+        const loginForm = document.getElementById('login-form');
+        const loginEmail = document.getElementById('login-email');
+        const loginPassword = document.getElementById('login-password');
+        const loginError = document.getElementById('login-error');
+        const signupForm = document.getElementById('signup-form');
+        const signupError = document.getElementById('signup-error');
+        const signupSuccess = document.getElementById('signup-success');
+        const habitList = document.getElementById('habit-list');
+        const newHabitInput = document.getElementById('new-habit');
+
+        // Event Listeners
+        document.getElementById('signup-btn').addEventListener('click', () => showPage('signup-page'));
+        document.getElementById('login-btn-main').addEventListener('click', () => showPage('login-page'));
+        document.getElementById('signup-back-btn').addEventListener('click', () => showPage('landing-page'));
+        document.getElementById('login-back-btn').addEventListener('click', () => showPage('landing-page'));
+        document.getElementById('login-attempt-btn').addEventListener('click', attemptLogin);
+        document.getElementById('signup-submit-btn').addEventListener('click', attemptSignup);
+        document.getElementById('add-habit-btn').addEventListener('click', addHabit);
+        
+        // New navigation button listeners
+        document.getElementById('tracker-back-btn').addEventListener('click', () => showPage('login-page'));
+        document.getElementById('tracker-next-btn').addEventListener('click', () => showPage('contact-page'));
+        document.getElementById('contact-back-btn').addEventListener('click', () => showPage('habit-tracker-page'));
+        document.getElementById('contact-submit-btn').addEventListener('click', handleContactSubmit);
+
+        // Functions
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById(pageId).style.display = 'block';
+            
+            // Clear messages and forms
+            if (loginError) loginError.style.display = 'none';
+            if (signupError) signupError.style.display = 'none';
+            if (signupSuccess) signupSuccess.style.display = 'none';
+            if (loginForm) loginForm.reset();
+            if (signupForm) signupForm.reset();
+        }
+
+        function attemptSignup() {
+            const name = document.getElementById('signup-name').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value.trim();
+
+            if (users[email]) {
+                signupError.textContent = 'Email already exists!';
+                signupError.style.display = 'block';
+                signupSuccess.style.display = 'none';
+                return;
+            }
+
+            users[email] = {
+                name: name,
+                password: password
+            };
+
+            signupSuccess.style.display = 'block';
+            signupError.style.display = 'none';
+            
+            setTimeout(() => {
+                showPage('login-page');
+            }, 2000);
+        }
+
+        function attemptLogin() {
+            const email = loginEmail.value.trim();
+            const password = loginPassword.value.trim();
+
+            if (users[email] && users[email].password === password) {
+                loginError.style.display = 'none';
+                showPage('habit-tracker-page');
+            } else {
+                loginError.style.display = 'block';
+            }
+        }
+
+        function addHabit() {
+            const habitText = newHabitInput.value.trim();
+            
+            if (habitText) {
+                const li = document.createElement('li');
+                li.textContent = habitText;
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.onclick = () => li.remove();
+                
+                li.appendChild(deleteBtn);
+                habitList.appendChild(li);
+                newHabitInput.value = '';
+                
+                updateProgress();
+            }
+        }
+
+        function updateProgress() {
+            const totalHabits = habitList.children.length;
+            const progressBar = document.getElementById('progress-bar');
+            if (totalHabits > 0) {
+                const progress = (totalHabits / 10) * 100;
+                progressBar.style.setProperty('--progress', `${Math.min(progress, 100)}%`);
+            }
+        }
+
+        function handleContactSubmit() {
+            const contactSuccess = document.getElementById('contact-success');
+            const contactForm = document.getElementById('contact-form');
+            
+            // Show success message
+            contactSuccess.style.display = 'block';
+            contactForm.reset();
+            
+            // Hide success message after 3 seconds
+            setTimeout(() => {
+                contactSuccess.style.display = 'none';
+            }, 3000);
+        }
+
+        // Initialize the page
+        showPage('landing-page');
+    </script>
+</body>
+</html>
