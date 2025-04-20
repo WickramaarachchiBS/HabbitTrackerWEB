@@ -166,7 +166,7 @@
     }
 
     function goConUs() {
-      window.location.href = 'contactus.html';
+      window.location.href = 'contactus.php';
     }
   </script>
 </body>

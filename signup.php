@@ -20,26 +20,28 @@
             margin: 0;
             padding: 0;
             font-family: 'Poppins', sans-serif;
+            background-image: url('images/background.png');
+            background-size: cover;
         }
         .image{
             width: 100%;
             height: 100vh;
             background-size: cover;
             background-position: center;
-            background-color: #979797;
-            background-image: url('images/4.jpg');
             /* display: flex; */
             justify-content: center;
             align-items: center;
         }
-        img.logo{
+        img{
             width: 25vh;
-            height: 18vh;
-            padding: 40px 40px 0 0;
-            margin: 0 0 0 auto;
+            height: 25vh;
+            margin: 40px 40px 0 auto;
             display: block;
+            background-color: #5d5e5d;
             border-radius: 20px;
-            /* background-color: #45a049; */
+            background-color: transparent;
+            border: #000000 solid 2px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
         .header{
             position: absolute;
