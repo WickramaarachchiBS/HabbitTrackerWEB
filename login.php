@@ -19,7 +19,7 @@
             background-size: cover;
             background-position: center;
             background-color: #7c7c7c;
-            background-image: url('4.jpg');
+            background-image: url('images/4.jpg');
             /* display: flex; */
             justify-content: center;
             align-items: center;
@@ -75,30 +75,43 @@
 </head>
 <body>
     <div class="image">
-        <img class="logo" src="3.jpg" alt="logo">
+        
+        <img class="logo" src="images/3.jpg" alt="logo">
         <div class="header">
             <h2>
                  Login to your Account 
                  </h2><br><br>
 
             <div class="form-group">
-                <form id="loginForm">
+                <form id="loginForm" action="controller/login.php" method="POST">
                     <div class="row mb-3">
                       <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
                       <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputEmail" required>
+                        <input type="email" class="form-control" id="inputEmail" name="email" required>
                       </div>
                     </div>
                     <div class="row mb-3">
                       <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
                       <div class="col-sm-10">
-                        <input type="password" class="form-control" id="inputPassword" required>
+                        <input type="password" class="form-control" id="inputPassword" name="password" required>
                       </div>
                     </div>
+
+                    <?php
+                        session_start();
+                        if (isset($_SESSION['error'])) {
+                            echo '<p class="error">' . $_SESSION['error'] . '</p>';
+                            unset($_SESSION['error']);
+                        }
+                        if (isset($_SESSION['success'])) {
+                            echo '<p class="success">' . $_SESSION['success'] . '</p>';
+                            unset($_SESSION['success']);
+                        }
+                    ?>
                     
                     <button type="submit" id="signup-btn">LOGIN</button>
                     <a href="index.html"><button type="button" id="back-btn-main">BACK</button></a><br>
-                    <b>Don't have an account?</b> <a href="signup.html">signup here</a> <br> 
+                    <b>Don't have an account?</b> <a href="signup.php">signup here</a> <br> 
 
                 </form>
             </div>

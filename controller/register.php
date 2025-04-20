@@ -1,21 +1,35 @@
 <?php
-require_once("db_connect.php");
+require_once 'db_connect.php';
+session_start();
 
-//get values from form
-$name = $_POST["name"];
-$email = $_POST["email"];
-$password = $_POST["password"];
-
-//insert into db
-$sql = "INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$password')";
-if (mysqli_query($conn, $sql)) {
-    echo "New record created successfully";
-    // Redirect to success page
-    header("Location: ../login.php");
-    exit();
-
-} else {
-    echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
+    $password = password_hash(trim($_POST['password']), PASSWORD_DEFAULT);
+    
+    try {
+        // Check if user already exists
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        
+        if ($stmt->rowCount() > 0) {
+            $_SESSION['error'] = "Email already registered!";
+            header("Location: ../signup.php");
+            exit();
+        }
+        
+        // Insert new user
+        $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+        $stmt->execute([$username, $email, $password]);
+        
+        $_SESSION['success'] = "Registration successful! Please login.";
+        header("Location: ../login.php");
+        exit();
+        
+    } catch(PDOException $e) {
+        $_SESSION['error'] = "Registration failed: " . $e->getMessage();
+        header("Location: ../signup.php");
+        exit();
+    }
 }
-mysqli_close($conn);
 ?>
