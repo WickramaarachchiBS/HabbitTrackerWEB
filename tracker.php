@@ -10,7 +10,7 @@
       margin: 0;
       padding: 0;
       background-color: #979797;
-      background-image: url('images/background.png');
+      background-image: url('images/background.jpg');
       background-repeat: no-repeat;
       background-size: cover;
       display: flex;

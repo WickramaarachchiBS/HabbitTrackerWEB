@@ -20,7 +20,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Poppins', sans-serif;
-            background-image: url('images/background.png');
+            background-image: url('images/background.jpg');
             background-size: cover;
         }
         .image{

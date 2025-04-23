@@ -12,6 +12,8 @@
             margin: 0;
             padding: 0;
             font-family: 'Poppins', sans-serif;
+            background-color: #000000;
+            background-image: url('images/background.jpg');
         }
         .image{
             width: 100%;
